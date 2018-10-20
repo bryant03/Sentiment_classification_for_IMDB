@@ -71,3 +71,36 @@ rnn_type_model.fit(input_train_pad, target_train,
                     validation_split=0.05, epochs=3, batch_size=64)
 
 model_result = rnn_type_model.evaluate(input_test_pad, target_test)
+print("Accuracy: {0:.2%}".format(model_result[1]))
+
+target_predicted = rnn_type_model.predict(x=input_test_pad[0:1000])
+target_predicted = target_predicted.T[0] 
+class_predicted = np.array([1.0 if prob>0.5 else 0.0 for prob in target_predicted]) 
+class_actual = np.array(target_test[0:1000]) 
+incorrect_samples = np.where(class_predicted != class_actual) 
+incorrect_samples = incorrect_samples[0] 
+print ('len',len(incorrect_samples))
+
+index = incorrect_samples[0]
+print ('index', index)
+
+incorrectly_predicted_text = input_text_test[index] 
+print ('incorrectly_predicted_text',incorrectly_predicted_text)
+
+print (target_predicted[index])
+
+print (class_actual[index])
+test_sample_1 = "This movie is fantastic! I really like it because it is so good!" 
+test_sample_2 = "Good movie!" 
+test_sample_3 = "Maybe I like this movie." 
+test_sample_4 = "Meh ..." 
+test_sample_5 = "If I were a drunk teenager then this movie might be good." 
+test_sample_6 = "Bad movie!" 
+test_sample_7 = "Not a good movie!" 
+test_sample_8 = "This movie really sucks! Can I get my money back please?" 
+test_samples = [test_sample_1, test_sample_2, test_sample_3, test_sample_4, test_sample_5, test_sample_6, test_sample_7, test_sample_8] 
+test_samples_tokens = tokenizer_obj.texts_to_sequences(test_samples) 
+test_samples_tokens_pad = pad_sequences(test_samples_tokens, maxlen=max_num_tokens,
+                           padding=seq_pad, truncating=seq_pad) 
+print (test_samples_tokens_pad.shape)
+rnn_type_model.predict(test_samples_tokens_pad)
